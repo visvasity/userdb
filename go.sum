@@ -1,0 +1,4 @@
+github.com/visvasity/kv v0.0.0-20250824163035-09b2b67d839f h1:XcDZpgt0tLcmHA2tW2Wu6+HEiX9HDvaNn73WQjh1Y+I=
+github.com/visvasity/kv v0.0.0-20250824163035-09b2b67d839f/go.mod h1:CZqPYUOKOBKISPpVXqWdRQJQqxRT3n9//U9PULXfpbY=
+github.com/visvasity/namedb v0.0.0-20250916190351-862e49cef517 h1:7yyOc5ZI/O+GTIFQuARoHjhr8YZMQWQla7Vq+qrU2eI=
+github.com/visvasity/namedb v0.0.0-20250916190351-862e49cef517/go.mod h1:rByH4VlzAAGXLYlvDi10W2mEocV9wMwe3BHual77uGE=
