@@ -4,6 +4,7 @@ package userdb
 
 import (
 	"context"
+	"slices"
 
 	"github.com/visvasity/kv"
 )
@@ -132,10 +133,5 @@ func removePurposes(existing, remove []string) []string {
 
 // hasPurpose reports whether ps contains p.
 func hasPurpose(ps []string, p string) bool {
-	for _, x := range ps {
-		if x == p {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(ps, p)
 }
