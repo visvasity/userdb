@@ -5,7 +5,6 @@ package userdb
 import (
 	"errors"
 	"fmt"
-	"path"
 	"strings"
 )
 
@@ -50,7 +49,7 @@ type Link struct {
 	Purposes  []string  // app-defined labels this email is eligible for; may be empty
 }
 
-// Store is an exclusive key prefix (an absolute path) under which one
+// Store is an exclusive key prefix under which one
 // email-to-identity directory keeps all of its records. No other component may
 // write under the same keyspace (SPEC §5).
 type Store struct {
@@ -68,16 +67,13 @@ func WithIdentityDomain(domain string) Option {
 	return func(s *Store) { s.identityDomain = domain }
 }
 
-// New returns a directory that persists under the given absolute keyspace path.
-// It fails if keyspace is empty or not absolute, or if a supplied option is
-// invalid (e.g. WithIdentityDomain given a malformed domain, which yields
-// ErrInvalidIdentity).
+// New returns a directory that persists under the given keyspace (an exclusive
+// key prefix; any trailing "/" is ignored). It fails if keyspace is empty, or if
+// a supplied option is invalid (e.g. WithIdentityDomain given a malformed
+// domain, which yields ErrInvalidIdentity).
 func New(keyspace string, opts ...Option) (*Store, error) {
 	if len(keyspace) == 0 {
 		return nil, fmt.Errorf("userdb: keyspace cannot be empty")
-	}
-	if !path.IsAbs(keyspace) {
-		return nil, fmt.Errorf("userdb: keyspace must be an absolute path")
 	}
 	s := &Store{
 		keyspace:       strings.TrimSuffix(keyspace, "/"),

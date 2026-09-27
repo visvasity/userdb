@@ -55,7 +55,7 @@ unique local part (account id).
 
 ## 2. On-disk model
 
-Two disjoint key classes under the Store's absolute keyspace (SPEC §5). Both are
+Two disjoint key classes under the Store's keyspace (SPEC §5). Both are
 written within the same caller-supplied `kv.ReadWriter` on every mutation, so
 they never drift.
 

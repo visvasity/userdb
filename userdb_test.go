@@ -143,8 +143,8 @@ func TestNewOptionAndErrors(t *testing.T) {
 	if _, err := New(""); err == nil {
 		t.Error("New with empty keyspace should fail")
 	}
-	if _, err := New("relative/path"); err == nil {
-		t.Error("New with relative keyspace should fail")
+	if _, err := New("relative/path"); err != nil {
+		t.Errorf("New with a relative keyspace should succeed, got %v", err)
 	}
 	if _, err := New("/userdb", WithIdentityDomain("bad domain")); !errors.Is(err, ErrInvalidIdentity) {
 		t.Errorf("New with bad domain error = %v, want ErrInvalidIdentity", err)

@@ -181,9 +181,9 @@ application-defined labels naming uses the email is eligible for.
 
 ## 5. Persistence layout
 
-All records live under the Store's keyspace (an absolute, `/`-rooted path, as
-in `namedb`). Two disjoint key classes are used; both are written within the
-same `kv.ReadWriter` so the two directions never drift:
+All records live under the Store's keyspace (an exclusive, non-empty key prefix;
+any trailing `/` is ignored). Two disjoint key classes are used; both are written
+within the same `kv.ReadWriter` so the two directions never drift:
 
 | Class | Key | Value (gob) | Meaning |
 |-------|-----|-------------|---------|
@@ -418,13 +418,14 @@ import (
 	"github.com/visvasity/kv"
 )
 
-// Store is an exclusive key prefix (an absolute path) under which one
+// Store is an exclusive key prefix under which one
 // email⇆identity directory keeps all of its records. No other component may
 // write under the same keyspace.
 type Store struct { /* unexported */ }
 
-// New returns a directory that persists under the given absolute keyspace path.
-// It fails if keyspace is empty or not absolute, or if an option is invalid
+// New returns a directory that persists under the given keyspace (an exclusive
+// key prefix; any trailing "/" is ignored).
+// It fails if keyspace is empty, or if an option is invalid
 // (e.g. WithIdentityDomain given a malformed domain -> ErrInvalidIdentity).
 func New(keyspace string, opts ...Option) (*Store, error)
 

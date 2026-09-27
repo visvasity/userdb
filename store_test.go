@@ -67,6 +67,23 @@ func TestKeyBuilders(t *testing.T) {
 	}
 }
 
+func TestKeyspaceForms(t *testing.T) {
+	// Non-absolute and trailing-slash keyspaces are accepted; a trailing "/" is
+	// trimmed so keys are identical regardless of the trailing slash.
+	for _, ks := range []string{"userdb", "userdb/"} {
+		s, err := New(ks)
+		if err != nil {
+			t.Fatalf("New(%q): %v", ks, err)
+		}
+		if got, want := s.emailKey("a@b.io"), "userdb/e/a@b.io"; got != want {
+			t.Errorf("New(%q) emailKey = %q, want %q", ks, got, want)
+		}
+	}
+	if _, err := New(""); err == nil {
+		t.Error("New(\"\") should fail")
+	}
+}
+
 func TestEmailRecRoundTrip(t *testing.T) {
 	s, db := newTestStore(t)
 	ctx := context.Background()
