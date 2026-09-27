@@ -6,12 +6,21 @@ import (
 	"context"
 	"errors"
 	"os"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/visvasity/kv"
 	"github.com/visvasity/kv/kvutil"
 )
+
+// sameProvider reports whether two OPTIONAL providers are equal.
+func sameProvider(a, b *Provider) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+	return *a == *b
+}
 
 // checkConsistency asserts the forward↔reverse bijection (SPEC §3.1): every
 // forward record has a matching reverse entry and vice versa. Reused by later
@@ -65,6 +74,13 @@ func checkConsistency(t *testing.T, s *Store, db kv.Database) {
 				}
 				if erec.Synthetic != id {
 					t.Errorf("reverse %q lists %q but forward says %q", id, l.Email, erec.Synthetic)
+				}
+				// Denormalized fields must match the forward source of truth.
+				if !slices.Equal(erec.Purposes, l.Purposes) {
+					t.Errorf("purposes drift for %q: forward %v, reverse %v", l.Email, erec.Purposes, l.Purposes)
+				}
+				if !sameProvider(erec.Provider, l.Provider) {
+					t.Errorf("provider drift for %q: forward %+v, reverse %+v", l.Email, erec.Provider, l.Provider)
 				}
 			}
 		}
