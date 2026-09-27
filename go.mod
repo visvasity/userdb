@@ -1,10 +1,10 @@
 module github.com/visvasity/userdb
 
-go 1.23.2
-
-toolchain go1.24.7
+go 1.26.0
 
 require (
-	github.com/visvasity/kv v0.0.0-20250824163035-09b2b67d839f
-	github.com/visvasity/namedb v0.0.0-20250916190351-862e49cef517
+	github.com/visvasity/kv v0.0.0-20251127181103-190fe23c8632
+	github.com/visvasity/kvmemdb v0.0.0-20260911033621-cdadeaee85c0
 )
+
+require github.com/visvasity/syncmap v0.0.0-20241218025521-5599e6c230a7 // indirect
