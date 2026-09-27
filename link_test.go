@@ -59,7 +59,9 @@ func checkConsistency(t *testing.T, s *Store, db kv.Database) {
 		}
 
 		// Reverse -> forward: each Link in every s/<identity> record resolves
-		// back to a forward record with the same identity.
+		// back to a forward record with the same identity. seenEmail also proves
+		// no email is bound to two identities at once (SPEC §3.1).
+		seenEmail := map[string]string{}
 		sbeg, send := kvutil.PrefixRange(s.keyspace + identityPrefix)
 		for key, rec := range kvutil.AscendGob[identityRec](ctx, r, sbeg, send, &err) {
 			id := strings.TrimPrefix(key, s.keyspace+identityPrefix)
@@ -67,6 +69,10 @@ func checkConsistency(t *testing.T, s *Store, db kv.Database) {
 				t.Errorf("reverse record %q is empty (should have been deleted)", id)
 			}
 			for _, l := range rec.Emails {
+				if other, dup := seenEmail[l.Email]; dup {
+					t.Errorf("email %q bound to two identities: %q and %q", l.Email, other, id)
+				}
+				seenEmail[l.Email] = id
 				erec, eerr := s.getEmail(ctx, r, l.Email)
 				if eerr != nil {
 					t.Errorf("reverse %q lists %q with no forward record: %v", id, l.Email, eerr)

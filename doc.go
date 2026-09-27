@@ -17,5 +17,16 @@
 //
 // All persistence flows through the github.com/visvasity/kv API. Every method
 // takes a caller-supplied kv.Reader or kv.ReadWriter, so a userdb mutation
-// composes atomically inside the caller's own transaction.
+// composes atomically inside the caller's own transaction. userdb performs no
+// transaction management and no serialization-conflict retry; the caller's
+// transaction owns atomicity, isolation, and retry.
+//
+// Concurrency caveat: with backends whose transactions do not record a read on
+// a missing key (notably github.com/visvasity/kvmemdb), two concurrent
+// transactions that each Link the *same, previously-unbound* email may both
+// commit without a conflict, leaving a last-writer-wins binding rather than an
+// ErrConflict. Update paths (an email already bound) read an existing record and
+// are serialized normally. Applications that require first-writer-wins on brand
+// new emails should serialize such creates themselves or use a backend that
+// records missing-key reads.
 package userdb
